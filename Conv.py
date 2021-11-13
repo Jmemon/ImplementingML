@@ -98,18 +98,21 @@ class Conv(Module):
                 parity_off = (self.kernel_size & 1) - 1
 
                 delta_row_slice = slice(a_row - k_half if a_row - k_half >= 0 else 0,
-                                        a_row + k_half + parity_off if a_row + k_half + parity_off < a.shape[0]
-                                        else a.shape[0] - 1)
+                                        a_row + k_half + parity_off + 1 if a_row + k_half + parity_off + 1 <= a.shape[0]
+                                        else a.shape[0])
                 delta_col_slice = slice(a_col - k_half if a_col - k_half >= 0 else 0,
-                                        a_col + k_half + parity_off if a_col + k_half + parity_off < a.shape[1]
-                                        else a.shape[1] - 1)
+                                        a_col + k_half + parity_off + 1 if a_col + k_half + parity_off + 1 <= a.shape[1]
+                                        else a.shape[1])
 
                 kernel_row_slice = slice(0 if k_half - a_row < 0 else k_half - a_row,
-                                         self.kernel_size if a.shape[0] - a_row - 1 > k_half + parity_off
-                                         else a.shape[0] - a_row - 1)
+                                         self.kernel_size if a_row + k_half + parity_off < a.shape[0]
+                                         else self.kernel_size - (a.shape[0] - a_row))
                 kernel_col_slice = slice(0 if k_half - a_col < 0 else k_half - a_col,
-                                         self.kernel_size if a.shape[1] - a_col - 1 > k_half + parity_off
-                                         else a.shape[1] - a_col - 1)
+                                         self.kernel_size if a_col + k_half + parity_off < a.shape[1]
+                                         else self.kernel_size - (a.shape[1] - a_col))
+
+                assert delta_row_slice.stop - delta_row_slice.start == kernel_row_slice.stop - kernel_row_slice.start
+                assert delta_col_slice.stop - delta_col_slice.start == kernel_col_slice.stop - kernel_col_slice.start
 
                 delta[delta_row_slice, delta_col_slice, p_out] = kernel[kernel_row_slice, kernel_col_slice]
 
@@ -134,7 +137,7 @@ class Conv(Module):
                     assert p_deltas_wrt_kernel.shape == (self.kernel_size,
                                                          self.kernel_size,
                                                          channel.shape[0] * channel.shape[1])
-                    assert p_deltas_wrt_a == (a.shape[0], a.shape[1], dz.shape[0] * dz.shape[1])
+                    assert p_deltas_wrt_a.shape == (a.shape[0], a.shape[1], dz.shape[0] * dz.shape[1])
 
                     assert p_deltas_wrt_kernel.shape[2] == scalars.shape[0]
                     assert p_deltas_wrt_a.shape[2] == scalars.shape[0]
