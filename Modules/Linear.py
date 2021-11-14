@@ -1,10 +1,10 @@
 import numpy as np
-from Module import Module
+from Modules.Module import Module
 
 
 class Linear(Module):
 
-    def __init__(self, in_size, out_size):
+    def __init__(self, in_size: int, out_size: int):
         super(Linear, self).__init__()
 
         self.in_size = in_size
@@ -27,3 +27,6 @@ class Linear(Module):
         assert a.shape[1] == dz.shape[1]  # same number of batches
 
         return np.dot(self.parameters.T, dz), np.dot(dz, a.T)   # dL/da, dL/dW
+
+    def __call__(self, x: np.ndarray) -> np.ndarray:
+        return self.forward(x)

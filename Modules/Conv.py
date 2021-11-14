@@ -1,5 +1,5 @@
 import numpy as np
-from Module import Module
+from Modules.Module import Module
 
 
 class Conv(Module):
@@ -146,3 +146,6 @@ class Conv(Module):
                     dw[:, :, in_ch, out_ch] = np.sum(np.multiply(scalars, p_deltas_wrt_kernel), axis=2)
 
         return da, dw
+
+    def __call__(self, x: np.ndarray) -> np.ndarray:
+        return self.forward(x)

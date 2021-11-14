@@ -1,6 +1,7 @@
 import numpy as np
-from Conv import Conv
-from CrossEntropyLoss import CrossEntropyLoss
+from Modules.Conv import Conv
+from Modules.CrossEntropyLoss import CrossEntropyLoss
+from Modules.BatchNorm1D import BatchNorm1D
 
 
 def main():
@@ -18,6 +19,10 @@ def main():
     loss = CrossEntropyLoss()
     out = np.random.rand(10, 4)  # 10 classes, batch_size 4
     print(loss.backward(out, np.array([3, 6, 1, 8])))
+
+    bn = BatchNorm1D(10)
+    x = np.random.rand(10, 100) + np.random.randint(0, 10, (10, 100))  # make sure input is very non-normal
+    x = bn(x)
 
 
 if __name__ == "__main__":
