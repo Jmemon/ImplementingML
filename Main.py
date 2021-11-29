@@ -21,9 +21,15 @@ def main():
     print(loss.backward(out, np.array([3, 6, 1, 8])))
 
     bn = BatchNorm1D(10)
-    x = np.random.rand(10, 100) + np.random.randint(0, 10, (10, 100))  # make sure input is very non-normal
+    x = np.random.rand(10, 100) + np.random.randint(0, 10, (10, 100))  # make sure input is non-normal
     x = bn(x)
 
+    a = np.random.rand(10, 100) + np.random.randint(0, 10, (10, 100))
+    dy = np.random.rand(10, 100) + np.random.randint(0, 10, (10, 100))
+    da, dw = bn.backward(a, dy)
+    print(da.shape)
+    print(dw[0].shape)
+    print(dw[1].shape)
 
 if __name__ == "__main__":
     main()
