@@ -4,12 +4,17 @@ from Modules.Module import Module
 
 class Linear(Module):
 
-    def __init__(self, in_size: int, out_size: int):
+    def __init__(self, in_size: int, out_size: int, parameters: np.ndarray = None):
         super(Linear, self).__init__()
 
         self.in_size = in_size
         self.out_size = out_size
-        self.parameters = np.random.rand(out_size, in_size)  # uniform distribution [0, 1)
+
+        if parameters is None:
+            self.parameters = np.random.rand(out_size, in_size)  # uniform distribution [0, 1)
+        else:
+            assert parameters.shape == (out_size, in_size)
+            self.parameters = parameters
 
     def forward(self, x: np.ndarray) -> np.ndarray:
         assert x.ndim == 2  # x.shape == (in_size, batch_size)
