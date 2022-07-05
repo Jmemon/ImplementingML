@@ -13,7 +13,9 @@ def main():
     rnn = RNN(in_size=in_size, out_size=out_size, batch_size=100)
     x = np.random.random((556, in_size, batch_size))
 
-    print(rnn(x))
+    pred, cache = rnn(x, np.zeros((out_size, batch_size)))
+    delta = np.random.random((out_size, batch_size))
+    print(rnn.backward(delta, cache))
 
 
 if __name__ == "__main__":
